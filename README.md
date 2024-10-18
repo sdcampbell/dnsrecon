@@ -33,8 +33,8 @@ export CHAOS_KEY=<your API key here>
 # Execution
 
 ```
-chmod +x dns-recon.sh
-./dns-recon.sh <domain> 
+chmod +x dnsrecon.sh
+./dnsrecon.sh <domain> 
 ```
 
 Please be patient. The script doesn't implement parallel execution, so large domains may take a while before you start seeing output.

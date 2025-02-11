@@ -97,12 +97,12 @@ dnsrecon() {
     # If no domains are returned from the mdi funtion, pass input domain directly to chaos api.
     if [[ -z "$mdi_result" ]]; then
         # Pass the input domain to chaos api and assign the output to a variable.
-        domains=$(chaos -silent -d "$domain")
+        domains=$(chaos-client -silent -d "$domain")
     else
         # Find all root domains.
         while IFS= read -r line; do
             root=$(rootdomain <<< "$line")
-            chaos_domains=$(chaos -silent -d "$root")
+            chaos_domains=$(chaos-client -silent -d "$root")
             domains=$(echo -e "$domains\n$chaos_domains")
         done <<< "$mdi_result"
         # Unique the domains.

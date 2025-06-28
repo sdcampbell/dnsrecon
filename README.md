@@ -8,15 +8,15 @@ This is far more effective than simply checking crt.sh, because if the domain is
 
 # Setup
 
-## Install libxml2-utils:
+## Install dnsrecon (Go version - Recommended):
 
-```
-sudo apt install libxml2-utils
+```bash
+go install github.com/sdcampbell/dnsrecon@latest
 ```
 
-## Install the Chaos client: (Requires Golang)
+## Install the Chaos client:
 
-```
+```bash
 go install -v github.com/projectdiscovery/chaos-client/cmd/chaos@latest
 ```
 
@@ -26,18 +26,44 @@ Signup to get your API key here: https://chaos.projectdiscovery.io/docs/quick-st
 
 Set the key in your .bashrc or .zshrc file:
 
-```
+```bash
 export CHAOS_KEY=<your API key here>
+```
+
+## Alternative: Bash Script Setup
+
+If you prefer the original bash script:
+
+1. Install libxml2-utils:
+```bash
+sudo apt install libxml2-utils
+```
+
+2. Make script executable:
+```bash
+chmod +x dnsrecon.sh
 ```
 
 # Execution
 
+## Go version (Fast - Concurrent Processing):
+
+```bash
+dnsrecon <domain>
 ```
-chmod +x dnsrecon.sh
+
+Check version:
+```bash
+dnsrecon -version
+```
+
+## Bash version:
+
+```bash
 ./dnsrecon.sh <domain> 
 ```
 
-Please be patient. The script doesn't implement parallel execution, so large domains may take a while before you start seeing output.
+The Go version implements concurrent processing with up to 50 parallel workers, making it significantly faster than the bash script for large domain lists. Results are output immediately as they're discovered.
 
 There are no banners or progress bars. The output is semi-colon separated for easy parsing with awk/grep/cut/Excel.
 

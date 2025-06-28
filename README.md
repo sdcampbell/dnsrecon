@@ -1,10 +1,10 @@
 # Background and Purpose
 
-This isn't your typical subdomain enumeration tool. This tool has the ability to expand your reach by finding subdomains owned by a common organization, then dive down into the details to find those that are both live and match to your scope.
+This isn't your typical subdomain enumeration tool. This tool enriches domain lists by resolving each domain to its IP address and identifying the organization that owns the IP block. This helps you determine which domains are actually in scope for your pentest by showing the real infrastructure owners.
 
-First, it checks to see if the domain entered as a command line argument is enrolled as a tenant with Microsoft Defender for Identity (MDI). If found in MDI, it returns a list of related domains. Next, it uses the Project Discovery Chaos API to return all subdomains. Finally, it checks to see if the domain resolves to a live IP address. If it resolves, the domain, IP address, and netblock owner are printed to the terminal. This is helpful for extracting domains which are in scope for your pentest.
+The tool reads domains from stdin (pipe input), resolves each to an IPv4 address, then performs whois lookups to identify the organization that owns each IP block. It supports multiple regional internet registries (ARIN, RIPE, APNIC, etc.) and handles rate limiting gracefully.
 
-This is far more effective than simply checking crt.sh, because if the domain is found in MDI, then all domains in that MDI tenant are owned by the same company. Also, I've had much better results querying the Chaos API than when using crt.sh.
+This is perfect for processing output from subdomain enumeration tools like chaos, subfinder, or amass to add context about which domains are owned by your target organization vs third-party providers.
 
 # Setup
 
@@ -30,40 +30,28 @@ Set the key in your .bashrc or .zshrc file:
 export CHAOS_KEY=<your API key here>
 ```
 
-## Alternative: Bash Script Setup
-
-If you prefer the original bash script:
-
-1. Install libxml2-utils:
-```bash
-sudo apt install libxml2-utils
-```
-
-2. Make script executable:
-```bash
-chmod +x dnsrecon.sh
-```
-
 # Execution
 
-## Go version (Fast - Concurrent Processing):
+The tool reads domains from stdin and outputs semicolon-separated results:
 
 ```bash
-dnsrecon <domain>
+# Using with chaos client
+chaos -d example.com | dnsrecon
+
+# Using with file input
+cat domains.txt | dnsrecon
+
+# Using with subfinder
+subfinder -d example.com | dnsrecon
+
+# Using with amass
+amass enum -d example.com | dnsrecon
 ```
 
 Check version:
 ```bash
 dnsrecon -version
 ```
-
-## Bash version:
-
-```bash
-./dnsrecon.sh <domain> 
-```
-
-The Go version implements concurrent processing with up to 50 parallel workers, making it significantly faster than the bash script for large domain lists. Results are output immediately as they're discovered.
 
 There are no banners or progress bars. The output is semi-colon separated for easy parsing with awk/grep/cut/Excel.
 
